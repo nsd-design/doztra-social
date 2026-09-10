@@ -12,3 +12,12 @@ export interface Contenu {
   dateCreation: string;
   dateModification: string;
 }
+
+export interface ContenuInput {
+  sujet: string;
+  publicCible?: string;
+  reseauSocial: ReseauSocial;
+  datePublicationPrevue?: string;
+}
+
+export type StatutFiltre = 'Tous' | Statut;

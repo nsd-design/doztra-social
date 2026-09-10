@@ -6,9 +6,10 @@ import { STATUS_CLASSES, STATUS_DOT, STATUT_OPTIONS } from '../../data/statusSty
 
 export interface StatusBadgeProps {
   statut: Statut;
+  onSelectStatut?: (statut: Statut) => void;
 }
 
-export function StatusBadge({ statut }: StatusBadgeProps) {
+export function StatusBadge({ statut, onSelectStatut }: StatusBadgeProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -34,9 +35,15 @@ export function StatusBadge({ statut }: StatusBadgeProps) {
               key={option}
               role="button"
               tabIndex={0}
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => {
+                setIsMenuOpen(false);
+                onSelectStatut?.(option);
+              }}
               onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') setIsMenuOpen(false);
+                if (event.key === 'Enter' || event.key === ' ') {
+                  setIsMenuOpen(false);
+                  onSelectStatut?.(option);
+                }
               }}
               className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] font-semibold text-ink hover:bg-canvas"
             >

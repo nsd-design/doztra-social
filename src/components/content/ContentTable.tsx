@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import type { Contenu } from '../../types/contenu';
+import type { Contenu, Statut } from '../../types/contenu';
 import { formatDate } from '../../utils/formatDate';
 import { StatusBadge } from './StatusBadge';
 
@@ -8,12 +8,13 @@ export interface ContentTableProps {
   contenus: Contenu[];
   onEdit: (contenu: Contenu) => void;
   onDelete: (id: string) => void;
+  onChangeStatut: (id: string, statut: Statut) => void;
 }
 
 const GRID_COLUMNS = 'grid-cols-[1.6fr_0.9fr_1.2fr_0.9fr_0.8fr_0.7fr]';
 const HEADERS = ['Sujet', 'Réseau', 'Public cible', 'Statut', 'Date', 'Actions'];
 
-export function ContentTable({ contenus, onEdit, onDelete }: ContentTableProps) {
+export function ContentTable({ contenus, onEdit, onDelete, onChangeStatut }: ContentTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-surface">
       <div className={`grid ${GRID_COLUMNS} gap-3 border-b border-border bg-canvas px-5 py-3.5`}>
@@ -32,7 +33,7 @@ export function ContentTable({ contenus, onEdit, onDelete }: ContentTableProps) 
           <div className="text-sm font-semibold text-ink">{contenu.sujet}</div>
           <div className="text-sm text-ink-secondary">{contenu.reseauSocial}</div>
           <div className="text-sm text-ink-secondary">{contenu.publicCible}</div>
-          <StatusBadge statut={contenu.statut} />
+          <StatusBadge statut={contenu.statut} onSelectStatut={(s) => onChangeStatut(contenu.id, s)} />
           <div className="text-sm text-ink-secondary">{formatDate(contenu.datePublicationPrevue)}</div>
           <div className="flex items-center gap-3">
             <FontAwesomeIcon

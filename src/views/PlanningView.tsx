@@ -1,28 +1,43 @@
-import type { Contenu } from '../types/contenu';
-import { MOCK_CONTENUS } from '../data/mockContenus';
+import type { Contenu, Statut } from '../types/contenu';
 import { CalendarWidget } from '../components/calendar/CalendarWidget';
 import { ContentCard } from '../components/content/ContentCard';
 import { EmptyState } from '../components/content/EmptyState';
 
 export interface PlanningViewProps {
+  contenus: Contenu[];
+  allContenus: Contenu[];
+  selectedDate: string | null;
+  onSelectDate: (date: string | null) => void;
   onEditContenu: (contenu: Contenu) => void;
+  onDelete: (id: string) => void;
+  onChangeStatut: (id: string, statut: Statut) => void;
 }
 
-function noopDelete() {
-  // Suppression non câblée à cette étape (interface seule).
-}
-
-export function PlanningView({ onEditContenu }: PlanningViewProps) {
+export function PlanningView({
+  contenus,
+  allContenus,
+  selectedDate,
+  onSelectDate,
+  onEditContenu,
+  onDelete,
+  onChangeStatut,
+}: PlanningViewProps) {
   return (
     <div className="flex flex-wrap items-start gap-6">
-      <CalendarWidget contenus={MOCK_CONTENUS} />
+      <CalendarWidget contenus={allContenus} selectedDate={selectedDate} onSelectDate={onSelectDate} />
 
       <div className="flex min-w-[320px] flex-1 flex-col gap-4">
-        {MOCK_CONTENUS.length === 0 ? (
+        {contenus.length === 0 ? (
           <EmptyState />
         ) : (
-          MOCK_CONTENUS.map((contenu) => (
-            <ContentCard key={contenu.id} contenu={contenu} onEdit={onEditContenu} onDelete={noopDelete} />
+          contenus.map((contenu) => (
+            <ContentCard
+              key={contenu.id}
+              contenu={contenu}
+              onEdit={onEditContenu}
+              onDelete={onDelete}
+              onChangeStatut={onChangeStatut}
+            />
           ))
         )}
       </div>

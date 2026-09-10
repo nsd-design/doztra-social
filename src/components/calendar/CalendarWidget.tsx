@@ -7,6 +7,8 @@ import { formatDate } from '../../utils/formatDate';
 
 export interface CalendarWidgetProps {
   contenus: Contenu[];
+  selectedDate: string | null;
+  onSelectDate: (date: string | null) => void;
 }
 
 const FRENCH_MONTHS = [
@@ -28,9 +30,8 @@ const WEEKDAY_LABELS = ['DIM', 'LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'];
 
 const now = new Date();
 
-export function CalendarWidget({ contenus }: CalendarWidgetProps) {
+export function CalendarWidget({ contenus, selectedDate, onSelectDate }: CalendarWidgetProps) {
   const [visible, setVisible] = useState({ year: now.getFullYear(), month: now.getMonth() });
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const { year: visibleYear, month: visibleMonth } = visible;
 
   function shiftMonth(delta: number) {
@@ -100,12 +101,12 @@ export function CalendarWidget({ contenus }: CalendarWidgetProps) {
               tabIndex={isClickable ? 0 : undefined}
               onClick={() => {
                 if (!isClickable || !cell.date) return;
-                setSelectedDate((current) => (current === cell.date ? null : cell.date));
+                onSelectDate(cell.date === selectedDate ? null : cell.date);
               }}
               onKeyDown={(event) => {
                 if (!isClickable || !cell.date) return;
                 if (event.key === 'Enter' || event.key === ' ') {
-                  setSelectedDate((current) => (current === cell.date ? null : cell.date));
+                  onSelectDate(cell.date === selectedDate ? null : cell.date);
                 }
               }}
               className={`text-center ${isClickable ? 'cursor-pointer' : ''}`}
@@ -140,7 +141,7 @@ export function CalendarWidget({ contenus }: CalendarWidgetProps) {
             icon={faXmark}
             role="button"
             tabIndex={0}
-            onClick={() => setSelectedDate(null)}
+            onClick={() => onSelectDate(null)}
             className="cursor-pointer"
           />
         </div>

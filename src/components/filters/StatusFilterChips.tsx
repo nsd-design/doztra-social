@@ -1,6 +1,4 @@
-import type { Statut } from '../../types/contenu';
-
-export type StatutFiltre = 'Tous' | Statut;
+import type { StatutFiltre } from '../../types/contenu';
 
 export interface StatusFilterChipsProps {
   activeStatut: StatutFiltre;

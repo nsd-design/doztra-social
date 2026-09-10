@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-regular-svg-icons';
-import type { Contenu, ReseauSocial } from '../../types/contenu';
+import type { Contenu, ContenuInput, ReseauSocial } from '../../types/contenu';
 import { RESEAUX_SOCIAUX } from '../../data/reseauxSociaux';
 import { Button } from '../ui/Button';
 import { TextInput } from '../ui/TextInput';
@@ -13,22 +13,39 @@ export interface ContentFormModalProps {
   mode: 'create' | 'edit';
   initialContenu?: Contenu;
   onClose: () => void;
+  onSubmit: (input: ContenuInput, id?: string) => void;
 }
 
 const DEFAULT_RESEAU: ReseauSocial = 'LinkedIn';
 
-export function ContentFormModal({ isOpen, mode, initialContenu, onClose }: ContentFormModalProps) {
+export function ContentFormModal({ isOpen, mode, initialContenu, onClose, onSubmit }: ContentFormModalProps) {
   const [sujet, setSujet] = useState(() => initialContenu?.sujet ?? '');
   const [reseauSocial, setReseauSocial] = useState<string>(() => initialContenu?.reseauSocial ?? DEFAULT_RESEAU);
   const [datePublicationPrevue, setDatePublicationPrevue] = useState(
     () => initialContenu?.datePublicationPrevue ?? '',
   );
   const [publicCible, setPublicCible] = useState(() => initialContenu?.publicCible ?? '');
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   if (!isOpen) return null;
 
   const title = mode === 'create' ? 'Nouveau contenu' : 'Modifier le contenu';
   const submitLabel = mode === 'create' ? 'Créer le contenu' : 'Enregistrer les modifications';
+  const sujetError = submitAttempted && sujet.trim() === '' ? 'Le sujet est obligatoire.' : undefined;
+
+  function handleSubmit() {
+    setSubmitAttempted(true);
+    if (sujet.trim() === '') return;
+
+    const input: ContenuInput = {
+      sujet: sujet.trim(),
+      publicCible: publicCible.trim() || undefined,
+      reseauSocial: reseauSocial as ReseauSocial,
+      datePublicationPrevue: datePublicationPrevue || undefined,
+    };
+    onSubmit(input, mode === 'edit' ? initialContenu?.id : undefined);
+    onClose();
+  }
 
   return (
     <div
@@ -53,7 +70,15 @@ export function ContentFormModal({ isOpen, mode, initialContenu, onClose }: Cont
           />
         </div>
 
-        <TextInput id="sujet" label="Sujet" required value={sujet} onChange={setSujet} placeholder="Sujet du contenu…" />
+        <TextInput
+          id="sujet"
+          label="Sujet"
+          required
+          value={sujet}
+          onChange={setSujet}
+          placeholder="Sujet du contenu…"
+          error={sujetError}
+        />
 
         <SelectInput
           id="reseauSocial"
@@ -82,7 +107,7 @@ export function ContentFormModal({ isOpen, mode, initialContenu, onClose }: Cont
           <Button variant="secondary" onClick={onClose}>
             Annuler
           </Button>
-          <Button variant="primary" onClick={onClose}>
+          <Button variant="primary" onClick={handleSubmit}>
             {submitLabel}
           </Button>
         </div>

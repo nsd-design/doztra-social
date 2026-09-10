@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import type { Contenu } from '../../types/contenu';
+import type { Contenu, Statut } from '../../types/contenu';
 import { formatDate } from '../../utils/formatDate';
 import { StatusBadge } from './StatusBadge';
 
@@ -8,9 +8,10 @@ export interface ContentCardProps {
   contenu: Contenu;
   onEdit: (contenu: Contenu) => void;
   onDelete: (id: string) => void;
+  onChangeStatut: (id: string, statut: Statut) => void;
 }
 
-export function ContentCard({ contenu, onEdit, onDelete }: ContentCardProps) {
+export function ContentCard({ contenu, onEdit, onDelete, onChangeStatut }: ContentCardProps) {
   return (
     <div className="flex flex-col gap-1.5 rounded-2xl border border-border bg-surface p-5">
       <div className="text-xs font-bold tracking-wide text-ink-secondary">
@@ -20,7 +21,7 @@ export function ContentCard({ contenu, onEdit, onDelete }: ContentCardProps) {
       <div className="text-[13px] font-medium leading-[18px] text-ink-secondary">{contenu.publicCible}</div>
 
       <div className="mt-2.5 flex items-center justify-between">
-        <StatusBadge statut={contenu.statut} />
+        <StatusBadge statut={contenu.statut} onSelectStatut={(s) => onChangeStatut(contenu.id, s)} />
         <div className="flex items-center gap-3.5">
           <div
             role="button"

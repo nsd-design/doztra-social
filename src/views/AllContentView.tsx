@@ -1,20 +1,20 @@
-import type { Contenu } from '../types/contenu';
-import { MOCK_CONTENUS } from '../data/mockContenus';
+import type { Contenu, Statut } from '../types/contenu';
 import { ContentTable } from '../components/content/ContentTable';
 import { EmptyState } from '../components/content/EmptyState';
 
 export interface AllContentViewProps {
+  contenus: Contenu[];
   onEditContenu: (contenu: Contenu) => void;
+  onDelete: (id: string) => void;
+  onChangeStatut: (id: string, statut: Statut) => void;
 }
 
-function noopDelete() {
-  // Suppression non câblée à cette étape (interface seule).
-}
-
-export function AllContentView({ onEditContenu }: AllContentViewProps) {
-  if (MOCK_CONTENUS.length === 0) {
+export function AllContentView({ contenus, onEditContenu, onDelete, onChangeStatut }: AllContentViewProps) {
+  if (contenus.length === 0) {
     return <EmptyState />;
   }
 
-  return <ContentTable contenus={MOCK_CONTENUS} onEdit={onEditContenu} onDelete={noopDelete} />;
+  return (
+    <ContentTable contenus={contenus} onEdit={onEditContenu} onDelete={onDelete} onChangeStatut={onChangeStatut} />
+  );
 }

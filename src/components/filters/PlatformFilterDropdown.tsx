@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { RESEAUX_SOCIAUX } from '../../data/reseauxSociaux';
@@ -6,17 +5,11 @@ import type { ReseauSocial } from '../../types/contenu';
 
 export interface PlatformFilterDropdownProps {
   isOpen: boolean;
+  selected: ReseauSocial[];
+  onToggle: (reseau: ReseauSocial) => void;
 }
 
-export function PlatformFilterDropdown({ isOpen }: PlatformFilterDropdownProps) {
-  const [selected, setSelected] = useState<ReseauSocial[]>([]);
-
-  function toggle(reseau: ReseauSocial) {
-    setSelected((current) =>
-      current.includes(reseau) ? current.filter((item) => item !== reseau) : [...current, reseau],
-    );
-  }
-
+export function PlatformFilterDropdown({ isOpen, selected, onToggle }: PlatformFilterDropdownProps) {
   if (!isOpen) return null;
 
   return (
@@ -29,9 +22,9 @@ export function PlatformFilterDropdown({ isOpen }: PlatformFilterDropdownProps) 
             key={reseau}
             role="button"
             tabIndex={0}
-            onClick={() => toggle(reseau)}
+            onClick={() => onToggle(reseau)}
             onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') toggle(reseau);
+              if (event.key === 'Enter' || event.key === ' ') onToggle(reseau);
             }}
             className="flex cursor-pointer items-center gap-2.5 py-1"
           >
