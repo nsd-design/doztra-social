@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  body{margin:0;}
+  *{box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;}
+  ::placeholder{color:#A1A1AA;}
+  a{color:#7C5CFC;}
+  a:hover{color:#6A47E8;}
+  input,select{font-family:'Plus Jakarta Sans',sans-serif;}
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;background:#FAFAFB;color:#18181B;">
+
+  <div style="width:260px;flex-shrink:0;background:#FFFFFF;border-right:1px solid #E4E4E7;padding:24px;display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:0;height:100vh;overflow-y:auto;">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:#7C5CFC;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0;">D</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;line-height:20px;">Doztra Social</div>
+          <div style="font-size:12px;color:#71717A;font-weight:500;">Planificateur de contenu</div>
+        </div>
+      </div>
+
+      <div style="margin-top:32px;display:flex;flex-direction:column;gap:4px;">
+        <div style="{{ planningNavStyle }}" onClick="{{ setViewPlanning }}">
+          <i class="fa-solid fa-calendar-days" style="{{ planningIconStyle }}"></i>
+          <span>Planification</span>
+        </div>
+        <div style="{{ allNavStyle }}" onClick="{{ setViewAll }}">
+          <i class="fa-solid fa-table-list" style="{{ allIconStyle }}"></i>
+          <span>Tous les contenus</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid #E4E4E7;padding-top:16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:999px;background:#F3EFFE;color:#7C5CFC;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">MD</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;line-height:18px;">Mounia Diallo</div>
+        <div style="font-size:12px;color:#71717A;font-weight:500;">Responsable social media</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+
+    <div style="position:sticky;top:0;z-index:10;background:#FFFFFF;border-bottom:1px solid #E4E4E7;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div style="position:relative;width:320px;max-width:100%;">
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#71717A;font-size:13px;"></i>
+        <input value="{{ search }}" onChange="{{ onSearch }}" placeholder="Rechercher un contenu…" style="width:100%;padding:10px 14px 10px 38px;border:1px solid #E4E4E7;border-radius:8px;font-size:14px;outline:none;background:#FAFAFB;"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="position:relative;">
+          <div style="display:flex;align-items:center;gap:8px;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;color:#71717A;cursor:pointer;" onClick="{{ toggleFilters }}">
+            <i class="fa-solid fa-sliders"></i><span>Filtres</span>
+          </div>
+          <sc-if value="{{ filtersOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:calc(100% + 8px);right:0;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:12px;box-shadow:0 12px 32px rgba(24,24,27,0.12);width:200px;z-index:30;display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:12px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">Réseau social</div>
+              <sc-for list="{{ platformChips }}" as="pc" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 0;" onClick="{{ pc.toggle }}">
+                  <div style="{{ pc.boxStyle }}"><i class="fa-solid fa-check" style="{{ pc.checkStyle }}"></i></div>
+                  <span style="font-size:13px;font-weight:500;">{{ pc.name }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;color:#71717A;cursor:pointer;" onClick="{{ toggleSort }}">
+          <i style="{{ sortIconClass }}"></i><span>Trier</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:#7C5CFC;color:#FFFFFF;border:none;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;" onClick="{{ openCreate }}" style-hover="background:#6A47E8;">
+          <i class="fa-solid fa-plus"></i><span>Nouveau contenu</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:32px;display:flex;flex-direction:column;gap:24px;flex:1;">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:24px;line-height:32px;font-weight:700;">{{ headerTitle }}</div>
+          <div style="font-size:15px;line-height:22px;font-weight:500;color:#71717A;margin-top:4px;">{{ headerSubtitle }}</div>
+        </div>
+        <sc-if value="{{ isPlanning }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:8px;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:10px 18px;font-size:14px;font-weight:600;color:#18181B;cursor:pointer;" onClick="{{ setViewAll }}">
+            <span>Voir tous les contenus</span><i class="fa-solid fa-arrow-right" style="font-size:12px;"></i>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <sc-for list="{{ statusChips }}" as="chip" hint-placeholder-count="4">
+          <div style="{{ chip.style }}" onClick="{{ chip.onClick }}">{{ chip.label }}</div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isPlanning }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+
+          <div style="flex:0 0 340px;min-width:300px;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:16px;padding:24px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#71717A;cursor:pointer;" onClick="{{ prevMonth }}"><i class="fa-solid fa-chevron-left" style="font-size:12px;"></i></div>
+              <div style="font-size:15px;font-weight:700;text-transform:capitalize;">{{ monthLabel }}</div>
+              <div style="width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#71717A;cursor:pointer;" onClick="{{ nextMonth }}"><i class="fa-solid fa-chevron-right" style="font-size:12px;"></i></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;">
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">DIM</div>
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">LUN</div>
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">MAR</div>
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">MER</div>
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">JEU</div>
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">VEN</div>
+              <div style="font-size:11px;font-weight:700;color:#71717A;text-align:center;">SAM</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">
+              <sc-for list="{{ calendarCells }}" as="cell" hint-placeholder-count="42">
+                <div style="text-align:center;cursor:pointer;" onClick="{{ cell.onClick }}">
+                  <div style="{{ cell.circleStyle }}">{{ cell.day }}</div>
+                  <div style="{{ cell.dotStyle }}"></div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasSelectedDate }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F3EFFE;color:#7C5CFC;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;">
+                <span>Filtré : {{ selectedDateDisplay }}</span>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onClick="{{ clearDateFilter }}"></i>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:1;min-width:320px;display:flex;flex-direction:column;gap:16px;">
+            <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+                <div style="background:#FFFFFF;border:1px solid #E4E4E7;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;">
+                  <div style="font-size:12px;font-weight:700;letter-spacing:0.4px;color:#71717A;">{{ it.metaLabel }}</div>
+                  <div style="font-size:15px;line-height:22px;font-weight:600;">{{ it.subject }}</div>
+                  <div style="font-size:13px;line-height:18px;font-weight:500;color:#71717A;">{{ it.audience }}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                    <div style="position:relative;">
+                      <div style="{{ it.badgeStyle }}" onClick="{{ it.toggleMenu }}">
+                        <div style="{{ it.dotBg }}"></div><span>{{ it.status }}</span><i class="fa-solid fa-chevron-down" style="font-size:8px;"></i>
+                      </div>
+                      <sc-if value="{{ it.statusMenuOpen }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:absolute;top:calc(100% + 6px);left:0;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:6px;box-shadow:0 12px 32px rgba(24,24,27,0.12);z-index:30;min-width:140px;">
+                          <sc-for list="{{ it.statusMenu }}" as="opt" hint-placeholder-count="3">
+                            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;" onClick="{{ opt.onClick }}" style-hover="background:#FAFAFB;">
+                              <div style="{{ opt.dotStyle }}"></div><span>{{ opt.value }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:14px;">
+                      <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#7C5CFC;cursor:pointer;" onClick="{{ it.edit }}">
+                        <i class="fa-solid fa-pen" style="font-size:11px;"></i><span>Modifier</span>
+                      </div>
+                      <sc-if value="{{ showDeleteAction }}" hint-placeholder-val="{{ true }}">
+                        <i class="fa-solid fa-trash" style="font-size:13px;color:#A1A1AA;cursor:pointer;" onClick="{{ it.remove }}" style-hover="color:#DC2626;"></i>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ hasNoItems }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:48px 24px;color:#71717A;background:#FFFFFF;border:1px dashed #E4E4E7;border-radius:16px;">
+                <i class="fa-regular fa-folder-open" style="font-size:28px;margin-bottom:10px;display:block;"></i>
+                <div style="font-size:14px;font-weight:500;">Aucun contenu ne correspond à ces filtres.</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAll }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FFFFFF;border:1px solid #E4E4E7;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1.6fr 0.9fr 1.2fr 0.9fr 0.8fr 0.7fr;gap:12px;padding:14px 20px;background:#FAFAFB;border-bottom:1px solid #E4E4E7;">
+            <div style="font-size:11px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;">Sujet</div>
+            <div style="font-size:11px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;">Réseau</div>
+            <div style="font-size:11px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;">Public cible</div>
+            <div style="font-size:11px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;">Statut</div>
+            <div style="font-size:11px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;">Date</div>
+            <div style="font-size:11px;font-weight:700;color:#71717A;text-transform:uppercase;letter-spacing:0.4px;">Actions</div>
+          </div>
+          <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ items }}" as="it" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:1.6fr 0.9fr 1.2fr 0.9fr 0.8fr 0.7fr;gap:12px;padding:14px 20px;border-bottom:1px solid #E4E4E7;align-items:center;">
+                <div style="font-size:14px;font-weight:600;">{{ it.subject }}</div>
+                <div style="font-size:14px;color:#71717A;">{{ it.platform }}</div>
+                <div style="font-size:14px;color:#71717A;">{{ it.audience }}</div>
+                <div style="position:relative;">
+                  <div style="{{ it.badgeStyle }}" onClick="{{ it.toggleMenu }}">
+                    <div style="{{ it.dotBg }}"></div><span>{{ it.status }}</span><i class="fa-solid fa-chevron-down" style="font-size:8px;"></i>
+                  </div>
+                  <sc-if value="{{ it.statusMenuOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;top:calc(100% + 6px);left:0;background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:6px;box-shadow:0 12px 32px rgba(24,24,27,0.12);z-index:30;min-width:140px;">
+                      <sc-for list="{{ it.statusMenu }}" as="opt" hint-placeholder-count="3">
+                        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;" onClick="{{ opt.onClick }}" style-hover="background:#FAFAFB;">
+                          <div style="{{ opt.dotStyle }}"></div><span>{{ opt.value }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="font-size:14px;color:#71717A;">{{ it.displayDate }}</div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <i class="fa-solid fa-pen" style="font-size:13px;color:#7C5CFC;cursor:pointer;" onClick="{{ it.edit }}"></i>
+                  <sc-if value="{{ showDeleteAction }}" hint-placeholder-val="{{ true }}">
+                    <i class="fa-solid fa-trash" style="font-size:13px;color:#A1A1AA;cursor:pointer;" onClick="{{ it.remove }}" style-hover="color:#DC2626;"></i>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ hasNoItems }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:48px 24px;color:#71717A;">
+              <i class="fa-regular fa-folder-open" style="font-size:28px;margin-bottom:10px;display:block;"></i>
+              <div style="font-size:14px;font-weight:500;">Aucun contenu ne correspond à ces filtres.</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(24,24,27,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;" onClick="{{ closeModal }}">
+      <div style="background:#FFFFFF;border-radius:16px;padding:32px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.25);display:flex;flex-direction:column;gap:18px;" onClick="{{ stopPropagation }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:18px;line-height:26px;font-weight:600;">{{ modalTitle }}</div>
+          <i class="fa-regular fa-circle-xmark" style="font-size:20px;color:#71717A;cursor:pointer;" onClick="{{ closeModal }}"></i>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-size:13px;font-weight:600;">Sujet *</label>
+          <input value="{{ formSubject }}" onChange="{{ onFormSubject }}" placeholder="Sujet du contenu…" style="{{ subjectInputStyle }}"/>
+          <sc-if value="{{ hasFormError }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#DC2626;font-weight:500;">{{ formError }}</div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-size:13px;font-weight:600;">Réseau social</label>
+          <select value="{{ formPlatform }}" onChange="{{ onFormPlatform }}" style="padding:10px 14px;border:1px solid #E4E4E7;border-radius:8px;font-size:14px;outline:none;background:#FAFAFB;">
+            <sc-for list="{{ platformOptions }}" as="p" hint-placeholder-count="5">
+              <option value="{{ p }}">{{ p }}</option>
+            </sc-for>
+          </select>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-size:13px;font-weight:600;">Date de publication prévue</label>
+          <input type="date" value="{{ formDate }}" onChange="{{ onFormDate }}" style="padding:10px 14px;border:1px solid #E4E4E7;border-radius:8px;font-size:14px;outline:none;background:#FAFAFB;"/>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-size:13px;font-weight:600;">Public cible</label>
+          <input value="{{ formAudience }}" onChange="{{ onFormAudience }}" placeholder="Ex. Décideurs marketing B2B" style="padding:10px 14px;border:1px solid #E4E4E7;border-radius:8px;font-size:14px;outline:none;background:#FAFAFB;"/>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:8px;">
+          <div style="background:#FFFFFF;border:1px solid #E4E4E7;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;" onClick="{{ closeModal }}">Annuler</div>
+          <div style="background:#7C5CFC;color:#FFFFFF;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;" onClick="{{ submitForm }}" style-hover="background:#6A47E8;">{{ submitLabel }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;planning&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;planning&quot;,&quot;all&quot;],&quot;section&quot;:&quot;Comportement&quot;},&quot;showDeleteAction&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportement&quot;}}">
+class Component extends DCLogic {
+  seedItems = [
+    {id:1, subject:"Lancement de la nouvelle fonctionnalité X", platform:"LinkedIn", date:"2026-09-15", audience:"Décideurs marketing B2B", status:"Brouillon"},
+    {id:2, subject:"Coulisses de l'équipe produit", platform:"Instagram", date:"2026-09-10", audience:"Communauté fidèle 18-34 ans", status:"Publié"},
+    {id:3, subject:"Témoignage client : agence Lumina", platform:"Facebook", date:"2026-09-18", audience:"PME locales", status:"Validé"},
+    {id:4, subject:"Astuce rapide : planifier en 3 clics", platform:"TikTok", date:"2026-09-12", audience:"Créateurs indépendants", status:"Publié"},
+    {id:5, subject:"Webinaire : tendances social media 2026", platform:"YouTube", date:"2026-09-25", audience:"Responsables communication", status:"Validé"},
+    {id:6, subject:"Étude de cas : +40% d'engagement", platform:"LinkedIn", date:"2026-09-22", audience:"Décideurs marketing B2B", status:"Validé"},
+    {id:7, subject:"Carrousel : 5 erreurs à éviter", platform:"Instagram", date:"2026-09-28", audience:"Community managers", status:"Brouillon"},
+    {id:8, subject:"Annonce partenariat régional", platform:"Facebook", date:"2026-10-02", audience:"PME locales", status:"Brouillon"},
+    {id:9, subject:"Duo créateur : behind the scenes", platform:"TikTok", date:"2026-10-05", audience:"Créateurs indépendants", status:"Validé"},
+    {id:10, subject:"Tutoriel : configurer son calendrier éditorial", platform:"YouTube", date:"2026-10-08", audience:"Responsables communication", status:"Publié"},
+    {id:11, subject:"Sondage : priorités marketing Q4", platform:"LinkedIn", date:"2026-10-12", audience:"Décideurs marketing B2B", status:"Brouillon"},
+    {id:12, subject:"Reel : récap du mois", platform:"Instagram", date:"2026-09-30", audience:"Communauté fidèle 18-34 ans", status:"Validé"},
+  ];
+  frenchMonths = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  todayStr = '2026-09-07';
+
+  state = {
+    view: this.props.defaultView || 'planning',
+    items: this.seedItems,
+    filterStatus: 'Tous',
+    search: '',
+    platformFilter: [],
+    sortDesc: false,
+    calMonth: 8,
+    calYear: 2026,
+    selectedDate: null,
+    filtersOpen: false,
+    modalOpen: false,
+    modalMode: 'create',
+    formData: {id:null, subject:'', platform:'LinkedIn', date:'2026-09-15', audience:''},
+    formError: '',
+    statusMenuId: null,
+  };
+
+  statusStyle(status){
+    if(status==='Brouillon') return {bg:'#F1F5F9', text:'#475569', dot:'#94A3B8'};
+    if(status==='Validé') return {bg:'#FEF3E2', text:'#B45309', dot:'#F59E0B'};
+    return {bg:'#DCFCE7', text:'#15803D', dot:'#22C55E'};
+  }
+
+  formatDate(iso){
+    const [y,m,d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  shiftMonth(delta){
+    this.setState(s => {
+      let m = s.calMonth + delta, y = s.calYear;
+      if(m < 0){ m = 11; y -= 1; }
+      if(m > 11){ m = 0; y += 1; }
+      return {calMonth:m, calYear:y};
+    });
+  }
+
+  togglePlatformFilter(p){
+    this.setState(s => {
+      const has = s.platformFilter.includes(p);
+      return {platformFilter: has ? s.platformFilter.filter(x=>x!==p) : [...s.platformFilter, p]};
+    });
+  }
+
+  openModal(mode, item){
+    if(mode === 'create'){
+      this.setState({modalOpen:true, modalMode:'create', formError:'', formData:{id:null, subject:'', platform:'LinkedIn', date:'2026-09-15', audience:''}});
+    } else {
+      this.setState({modalOpen:true, modalMode:'edit', formError:'', formData:{id:item.id, subject:item.subject, platform:item.platform, date:item.date, audience:item.audience}});
+    }
+  }
+
+  submitForm(){
+    const fd = this.state.formData;
+    if(!fd.subject.trim()){ this.setState({formError:'Le sujet est obligatoire.'}); return; }
+    if(this.state.modalMode === 'create'){
+      const newItem = {id:Date.now(), subject:fd.subject.trim(), platform:fd.platform, date:fd.date, audience: fd.audience.trim() || 'Audience à définir', status:'Brouillon'};
+      this.setState(s => ({items:[...s.items, newItem], modalOpen:false}));
+    } else {
+      this.setState(s => ({items: s.items.map(i => i.id===fd.id ? {...i, subject:fd.subject.trim(), platform:fd.platform, date:fd.date, audience:fd.audience.trim()} : i), modalOpen:false}));
+    }
+  }
+
+  setStatus(id, status){
+    this.setState(s => ({items: s.items.map(i => i.id===id ? {...i, status} : i), statusMenuId:null}));
+  }
+
+  getFilteredItems(){
+    let list = this.state.items.slice();
+    if(this.state.filterStatus !== 'Tous') list = list.filter(i => i.status === this.state.filterStatus);
+    if(this.state.platformFilter.length) list = list.filter(i => this.state.platformFilter.includes(i.platform));
+    if(this.state.search.trim()){
+      const q = this.state.search.trim().toLowerCase();
+      list = list.filter(i => i.subject.toLowerCase().includes(q) || i.audience.toLowerCase().includes(q));
+    }
+    if(this.state.selectedDate) list = list.filter(i => i.date === this.state.selectedDate);
+    list.sort((a,b) => this.state.sortDesc ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date));
+    return list;
+  }
+
+  buildCalendar(){
+    const {calYear, calMonth, selectedDate} = this.state;
+    const first = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+    const total = Math.ceil((first + daysInMonth) / 7) * 7;
+    const cells = [];
+    for(let i=0;i<total;i++){
+      const dayNum = i - first + 1;
+      const inMonth = dayNum >= 1 && dayNum <= daysInMonth;
+      const dateStr = inMonth ? `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}` : null;
+      const hasContent = inMonth && this.state.items.some(it => it.date === dateStr);
+      const isToday = dateStr === this.todayStr;
+      const isSelected = !!dateStr && dateStr === selectedDate;
+      cells.push({
+        key:i,
+        day: inMonth ? dayNum : '',
+        onClick: inMonth ? (() => this.setState(s => ({selectedDate: s.selectedDate===dateStr ? null : dateStr}))) : (() => {}),
+        circleStyle: {
+          width:'36px', height:'36px', display:'flex', alignItems:'center', justifyContent:'center',
+          borderRadius:'10px', fontSize:'14px', fontWeight:600, margin:'0 auto',
+          cursor: inMonth ? 'pointer' : 'default',
+          color: !inMonth ? 'transparent' : (isSelected ? '#FFFFFF' : (isToday ? '#7C5CFC' : '#18181B')),
+          background: isSelected ? '#7C5CFC' : (isToday ? '#F3EFFE' : 'transparent'),
+        },
+        dotStyle: {
+          width:'5px', height:'5px', borderRadius:'50%', background:'#7C5CFC', margin:'3px auto 0',
+          visibility: (hasContent && !isSelected) ? 'visible' : 'hidden',
+        }
+      });
+    }
+    return cells;
+  }
+
+  mapItem(i){
+    const s = this.statusStyle(i.status);
+    const statusMenuOpen = this.state.statusMenuId === i.id;
+    return {
+      ...i,
+      displayDate: this.formatDate(i.date),
+      metaLabel: i.platform.toUpperCase() + ' · ' + this.formatDate(i.date),
+      badgeStyle: {display:'inline-flex', alignItems:'center', gap:'6px', background:s.bg, color:s.text, padding:'6px 12px', borderRadius:'999px', fontSize:'12px', fontWeight:700, cursor:'pointer'},
+      dotBg: {width:'6px', height:'6px', borderRadius:'50%', background:s.dot},
+      toggleMenu: () => this.setState(st => ({statusMenuId: st.statusMenuId===i.id ? null : i.id})),
+      statusMenuOpen,
+      statusMenu: ['Brouillon','Validé','Publié'].map(v => {
+        const vs = this.statusStyle(v);
+        return {value:v, dotStyle:{width:'6px',height:'6px',borderRadius:'50%',background:vs.dot}, onClick: () => this.setStatus(i.id, v)};
+      }),
+      edit: () => this.openModal('edit', i),
+      remove: () => this.setState(st => ({items: st.items.filter(x => x.id !== i.id)})),
+    };
+  }
+
+  renderVals(){
+    const isPlanning = this.state.view === 'planning';
+    const filtered = this.getFilteredItems().map(i => this.mapItem(i));
+    const counts = {
+      Tous: this.state.items.length,
+      Brouillon: this.state.items.filter(i=>i.status==='Brouillon').length,
+      Validé: this.state.items.filter(i=>i.status==='Validé').length,
+      Publié: this.state.items.filter(i=>i.status==='Publié').length,
+    };
+    const statusChips = ['Tous','Brouillon','Validé','Publié'].map(key => ({
+      key, label: key + ' (' + counts[key] + ')',
+      onClick: () => this.setState({filterStatus:key}),
+      style: {
+        padding:'8px 16px', borderRadius:'999px', fontSize:'13px', fontWeight:600, cursor:'pointer',
+        border: this.state.filterStatus===key ? '1px solid #7C5CFC' : '1px solid #E4E4E7',
+        background: this.state.filterStatus===key ? '#F3EFFE' : '#FFFFFF',
+        color: this.state.filterStatus===key ? '#7C5CFC' : '#71717A',
+      }
+    }));
+    const platformChips = ['LinkedIn','Instagram','Facebook','TikTok','YouTube'].map(p => {
+      const checked = this.state.platformFilter.includes(p);
+      return {
+        name:p, toggle: () => this.togglePlatformFilter(p),
+        boxStyle: {width:'16px',height:'16px',borderRadius:'4px',border: checked?'1px solid #7C5CFC':'1px solid #E4E4E7', background: checked?'#7C5CFC':'#FFFFFF', display:'flex', alignItems:'center', justifyContent:'center'},
+        checkStyle: {fontSize:'9px', color:'#FFFFFF', display: checked?'block':'none'},
+      };
+    });
+    const navBase = {display:'flex', alignItems:'center', gap:'12px', padding:'10px 12px', borderRadius:'12px', cursor:'pointer', fontSize:'14px', fontWeight:600};
+
+    return {
+      isPlanning, isAll: !isPlanning,
+      setViewPlanning: () => this.setState({view:'planning', selectedDate:null}),
+      setViewAll: () => this.setState({view:'all', selectedDate:null}),
+      planningNavStyle: {...navBase, background: isPlanning?'#F3EFFE':'transparent', color: isPlanning?'#7C5CFC':'#71717A'},
+      allNavStyle: {...navBase, background: !isPlanning?'#F3EFFE':'transparent', color: !isPlanning?'#7C5CFC':'#71717A'},
+      planningIconStyle: {width:'16px'},
+      allIconStyle: {width:'16px'},
+      headerTitle: isPlanning ? 'Planification éditoriale' : 'Tous les contenus',
+      headerSubtitle: isPlanning ? 'Votre calendrier de publication à venir.' : "L'ensemble de votre calendrier de publication.",
+      search: this.state.search,
+      onSearch: (e) => this.setState({search:e.target.value}),
+      statusChips,
+      items: filtered,
+      hasItems: filtered.length > 0,
+      hasNoItems: filtered.length === 0,
+      monthLabel: this.frenchMonths[this.state.calMonth] + ' ' + this.state.calYear,
+      prevMonth: () => this.shiftMonth(-1),
+      nextMonth: () => this.shiftMonth(1),
+      calendarCells: this.buildCalendar(),
+      hasSelectedDate: !!this.state.selectedDate,
+      selectedDateDisplay: this.state.selectedDate ? this.formatDate(this.state.selectedDate) : '',
+      clearDateFilter: () => this.setState({selectedDate:null}),
+      filtersOpen: this.state.filtersOpen,
+      toggleFilters: () => this.setState(s => ({filtersOpen: !s.filtersOpen})),
+      platformChips,
+      sortIconClass: 'fa-solid ' + (this.state.sortDesc ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'),
+      toggleSort: () => this.setState(s => ({sortDesc: !s.sortDesc})),
+      openCreate: () => this.openModal('create'),
+      showDeleteAction: this.props.showDeleteAction ?? true,
+      modalOpen: this.state.modalOpen,
+      modalTitle: this.state.modalMode === 'create' ? 'Nouveau contenu' : 'Modifier le contenu',
+      submitLabel: this.state.modalMode === 'create' ? 'Créer le contenu' : 'Enregistrer les modifications',
+      formSubject: this.state.formData.subject,
+      onFormSubject: (e) => this.setState(s => ({formData:{...s.formData, subject:e.target.value}})),
+      subjectInputStyle: {padding:'10px 14px', border: this.state.formError ? '1px solid #DC2626' : '1px solid #E4E4E7', borderRadius:'8px', fontSize:'14px', outline:'none', background:'#FAFAFB'},
+      formPlatform: this.state.formData.platform,
+      onFormPlatform: (e) => this.setState(s => ({formData:{...s.formData, platform:e.target.value}})),
+      platformOptions: ['LinkedIn','Instagram','Facebook','TikTok','YouTube'],
+      formDate: this.state.formData.date,
+      onFormDate: (e) => this.setState(s => ({formData:{...s.formData, date:e.target.value}})),
+      formAudience: this.state.formData.audience,
+      onFormAudience: (e) => this.setState(s => ({formData:{...s.formData, audience:e.target.value}})),
+      formError: this.state.formError,
+      hasFormError: !!this.state.formError,
+      closeModal: () => this.setState({modalOpen:false}),
+      submitForm: () => this.submitForm(),
+      stopPropagation: (e) => e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>
